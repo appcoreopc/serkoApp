@@ -7,7 +7,7 @@
     {
         public string Name { get; set; }
 
-        public int Rating { get; set; }
+        public float? Rating { get; set; }
 
         public int NumberOfReviews { get; set; }
 

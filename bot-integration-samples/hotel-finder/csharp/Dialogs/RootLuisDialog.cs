@@ -1,5 +1,6 @@
 ﻿namespace LuisBot.Dialogs
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -10,8 +11,11 @@
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
+    using System.Net.Http;
+    using LuisBot.Model;
 
-    [LuisModel("YourModelId", "YourSubscriptionKey")]
+
+    [LuisModel("1a9a6d0b-1e8a-4223-9f87-8520767a5df8", "e9d4cd55c7224d57b0c93cce45713594")]
     [Serializable]
     public class RootLuisDialog : LuisDialog<object>
     {
@@ -21,13 +25,15 @@
 
         private const string EntityAirportCode = "AirportCode";
 
-        private IList<string> titleOptions = new List<string> { "“Very stylish, great stay, great staff”", "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”", "“Positive surprise”", "“Beautiful suite and resort”" };
+        private IList<string> titleOptions = new List<string> { "“Very stylish, great stay, great staff”",
+            "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”",
+            "“Positive surprise”", "“Beautiful suite and resort”" };
 
         [LuisIntent("")]
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            string message = $"Sorry, I did not understand '{result.Query}'. Type 'help' if you need assistance.";
+            string message = $"{AppConstant.UnableToUnderstandCommandMessage} '{result.Query}'. {AppConstant.TypeHelpMessage}";
 
             await context.PostAsync(message);
 
@@ -38,7 +44,9 @@
         public async Task Search(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
         {
             var message = await activity;
-            await context.PostAsync($"Welcome to the Hotels finder! We are analyzing your message: '{message.Text}'...");
+
+            // post message to bot console //
+            await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
 
             var hotelsQuery = new HotelsQuery();
 
@@ -92,7 +100,7 @@
         [LuisIntent("Help")]
         public async Task Help(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("Hi! Try asking me things like 'search hotels in Seattle', 'search hotels near LAX airport' or 'show me the reviews of The Bot Resort'");
+            await context.PostAsync(AppConstant.ChatHelpMessage);
 
             context.Wait(this.MessageReceived);
         }
@@ -129,7 +137,7 @@
 
                 var hotels = await this.GetHotelsAsync(searchQuery);
 
-                await context.PostAsync($"I found {hotels.Count()} hotels:");
+                await context.PostAsync($"{AppConstant.FoundHotelMessage} {hotels.Count()} {AppConstant.HotelTextMessageNotification}");
 
                 var resultMessage = context.MakeMessage();
                 resultMessage.AttachmentLayout = AttachmentLayoutTypes.Carousel;
@@ -140,7 +148,7 @@
                     HeroCard heroCard = new HeroCard()
                     {
                         Title = hotel.Name,
-                        Subtitle = $"{hotel.Rating} starts. {hotel.NumberOfReviews} reviews. From ${hotel.PriceStarting} per night.",
+                        Subtitle = $"Ratings:{hotel.Rating}",
                         Images = new List<CardImage>()
                         {
                             new CardImage() { Url = hotel.Image }
@@ -167,11 +175,11 @@
 
                 if (ex.InnerException == null)
                 {
-                    reply = "You have canceled the operation.";
+                    reply = AppConstant.CancelOperationMessage;
                 }
                 else
                 {
-                    reply = $"Oops! Something went wrong :( Technical Details: {ex.InnerException.Message}";
+                    reply = $"{AppConstant.OpsssTextMessage} {ex.InnerException.Message}";
                 }
 
                 await context.PostAsync(reply);
@@ -184,26 +192,39 @@
 
         private async Task<IEnumerable<Hotel>> GetHotelsAsync(HotelsQuery searchQuery)
         {
-            var hotels = new List<Hotel>();
+            var url = string.Empty;
 
-            // Filling the hotels results manually just for demo purposes
-            for (int i = 1; i <= 5; i++)
+            var apiKey = "";
+
+            if (!string.IsNullOrEmpty(searchQuery.Destination))
             {
-                var random = new Random(i);
-                Hotel hotel = new Hotel()
-                {
-                    Name = $"{searchQuery.Destination ?? searchQuery.AirportCode} Hotel {i}",
-                    Location = searchQuery.Destination ?? searchQuery.AirportCode,
-                    Rating = random.Next(1, 5),
-                    NumberOfReviews = random.Next(0, 5000),
-                    PriceStarting = random.Next(80, 450),
-                    Image = $"https://placeholdit.imgix.net/~text?txtsize=35&txt=Hotel+{i}&w=500&h=260"
-                };
+                url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query=hotel%20{searchQuery.Destination}&l&key={apiKey}";
 
-                hotels.Add(hotel);
             }
 
-            hotels.Sort((h1, h2) => h1.PriceStarting.CompareTo(h2.PriceStarting));
+            var hotels = new List<Hotel>();
+
+            using (var client = new HttpClient())
+            {
+                using (var r = await client.GetAsync(new Uri(url)))
+                {
+                    string result = await r.Content.ReadAsStringAsync();
+
+                    var data = JsonConvert.DeserializeObject<HotelResult>(result);
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Hotel hotel = new Hotel()
+                        {
+                            Name = data.Results[i].Name,
+                            Location = data.Results[0].Formatted_address,
+                            Rating = data.Results[i].Rating,
+
+                        };
+                        hotels.Add(hotel);
+                    }
+                }
+            }
 
             return hotels;
         }
