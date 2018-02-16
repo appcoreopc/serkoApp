@@ -38,7 +38,8 @@
                         Trace.TraceError(ex.ToString());
                     }
                 }
-
+                
+                
                 await Conversation.SendAsync(activity, () => new RootLuisDialog());
             }
             else
@@ -59,6 +60,21 @@
             }
             else if (message.Type == ActivityTypes.ConversationUpdate)
             {
+                IConversationUpdateActivity iConversationUpdated = message as IConversationUpdateActivity;
+
+                if (string.IsNullOrWhiteSpace(message.Text))
+                {
+                    foreach (var member in iConversationUpdated.MembersAdded ?? System.Array.Empty<ChannelAccount>())
+                    {
+                        // if the bot is added, then
+                        if (member.Id == iConversationUpdated.Recipient.Id)
+                        {
+                            ConnectorClient connector = new ConnectorClient(new System.Uri(message.ServiceUrl));
+                            Activity replyToConversation = message.CreateReply(AppConstant.InitialPrompt);
+                            var response = connector.Conversations.SendToConversationAsync(replyToConversation);
+                        }
+                    }     
+                }
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
@@ -73,6 +89,9 @@
                 // Handle knowing tha the user is typing
             }
             else if (message.Type == ActivityTypes.Ping)
+            {
+            }
+            else if (message.Type == ActivityTypes.EndOfConversation)
             {
             }
 

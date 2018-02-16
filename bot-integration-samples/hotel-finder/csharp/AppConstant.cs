@@ -2,7 +2,7 @@
 {
     public class AppConstant
     {
-        public const string ChatHelpMessage =  "Try 'search hotels in Auckland', 'search hotels near LAX airport' or 'show me the reviews of The Bot Resort'";
+        public const string ChatHelpMessage =  "At the moment we support searching of hotels. Try 'search hotels in Auckland', 'search hotels near LAX airport'";
 
         public const string CancelOperationMessage = "You have canceled the operation.";
         
@@ -20,5 +20,6 @@
 
         public const string DotDotDotMessage = "...";
 
+        public const string InitialPrompt = "Hi there! I am here to help you. Could you tell me more about your customer locations?";
     }
 }

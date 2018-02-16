@@ -28,7 +28,7 @@
         private IList<string> titleOptions = new List<string> { "“Very stylish, great stay, great staff”",
             "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”",
             "“Positive surprise”", "“Beautiful suite and resort”" };
-
+        
         [LuisIntent("")]
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
@@ -194,7 +194,7 @@
         {
             var url = string.Empty;
 
-            var apiKey = "";
+            var apiKey = "AIzaSyCZtwsY0V0YLyRy0XhIZZ5bjJuZ7qpgK-c";
 
             if (!string.IsNullOrEmpty(searchQuery.Destination))
             {
