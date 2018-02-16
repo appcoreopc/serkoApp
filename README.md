@@ -26,7 +26,7 @@ c) Users 'input' are tracked and used for machine training purposes using D-gram
 
 
  
-Application sample built so far. 
+# Application sample built so far. 
 
 
 
