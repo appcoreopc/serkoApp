@@ -15,7 +15,7 @@
     using LuisBot.Model;
 
 
-    [LuisModel("1a9a6d0b-1e8a-4223-9f87-8520767a5df8", "e9d4cd55c7224d57b0c93cce45713594")]
+    [LuisModel("7613da72-8006-4d27-bc0b-4a96e723d5bf", "e9d4cd55c7224d57b0c93cce45713594")]
     [Serializable]
     public class RootLuisDialog : LuisDialog<object>
     {
@@ -28,7 +28,9 @@
         private IList<string> titleOptions = new List<string> { "“Very stylish, great stay, great staff”",
             "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”",
             "“Positive surprise”", "“Beautiful suite and resort”" };
+
         
+
         [LuisIntent("")]
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
@@ -61,6 +63,30 @@
 
             context.Call(hotelsFormDialog, this.ResumeAfterHotelsFormDialog);
         }
+
+
+        [LuisIntent("search")]
+        public async Task SearchV2(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+        {
+            var message = await activity;
+
+            // post message to bot console //
+            await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
+
+            var hotelsQuery = new HotelsQuery();
+
+            EntityRecommendation cityEntityRecommendation;
+
+            if (result.TryFindEntity(EntityGeographyCity, out cityEntityRecommendation))
+            {
+                cityEntityRecommendation.Type = "Destination";
+            }
+
+            var hotelsFormDialog = new FormDialog<HotelsQuery>(hotelsQuery, this.BuildHotelsForm, FormOptions.PromptInStart, result.Entities);
+
+            context.Call(hotelsFormDialog, this.ResumeAfterHotelsFormDialog);
+        }
+
 
         [LuisIntent("ShowHotelsReviews")]
         public async Task Reviews(IDialogContext context, LuisResult result)

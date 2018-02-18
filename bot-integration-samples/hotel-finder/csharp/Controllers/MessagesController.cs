@@ -69,7 +69,7 @@
                         // if the bot is added, then
                         if (member.Id == iConversationUpdated.Recipient.Id)
                         {
-                            ConnectorClient connector = new ConnectorClient(new System.Uri(message.ServiceUrl));
+                            ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
                             Activity replyToConversation = message.CreateReply(AppConstant.InitialPrompt);
                             var response = connector.Conversations.SendToConversationAsync(replyToConversation);
                         }
