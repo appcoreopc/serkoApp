@@ -29,7 +29,7 @@
             "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”",
             "“Positive surprise”", "“Beautiful suite and resort”" };
 
-        
+
 
         [LuisIntent("")]
         [LuisIntent("None")]
@@ -42,51 +42,40 @@
             context.Wait(this.MessageReceived);
         }
 
-        [LuisIntent("SearchHotels")]
-        public async Task Search(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
-        {
-            var message = await activity;
-
-            // post message to bot console //
-            await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
-
-            var hotelsQuery = new HotelsQuery();
-
-            EntityRecommendation cityEntityRecommendation;
-
-            if (result.TryFindEntity(EntityGeographyCity, out cityEntityRecommendation))
-            {
-                cityEntityRecommendation.Type = "Destination";
-            }
-
-            var hotelsFormDialog = new FormDialog<HotelsQuery>(hotelsQuery, this.BuildHotelsForm, FormOptions.PromptInStart, result.Entities);
-
-            context.Call(hotelsFormDialog, this.ResumeAfterHotelsFormDialog);
-        }
-
-
         [LuisIntent("search")]
         public async Task SearchV2(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
         {
             var message = await activity;
-
+            
             // post message to bot console //
-            await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
+            //await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
 
-            var hotelsQuery = new HotelsQuery();
 
-            EntityRecommendation cityEntityRecommendation;
-
-            if (result.TryFindEntity(EntityGeographyCity, out cityEntityRecommendation))
+            if (result != null)
             {
-                cityEntityRecommendation.Type = "Destination";
+                context.Call(new BookingDialog(result), this.OnResumeBookingDialog);
             }
+          
 
-            var hotelsFormDialog = new FormDialog<HotelsQuery>(hotelsQuery, this.BuildHotelsForm, FormOptions.PromptInStart, result.Entities);
+            //var hotelsQuery = new HotelsQuery();
 
-            context.Call(hotelsFormDialog, this.ResumeAfterHotelsFormDialog);
+            //EntityRecommendation cityEntityRecommendation;
+
+            //if (result.TryFindEntity(EntityGeographyCity, out cityEntityRecommendation))
+            //{
+            //    cityEntityRecommendation.Type = "Destination";
+            //}
+
+           // var hotelsFormDialog = new FormDialog<HotelsQuery>(hotelsQuery, this.BuildHotelsForm, FormOptions.PromptInStart, result.Entities);
+
+            //context.Call(hotelsFormDialog, this.ResumeAfterHotelsFormDialog);
         }
 
+        private async Task OnResumeBookingDialog(IDialogContext context, IAwaitable<BookingInfo> result)
+        {
+
+            context.Wait(this.MessageReceived);
+        }
 
         [LuisIntent("ShowHotelsReviews")]
         public async Task Reviews(IDialogContext context, LuisResult result)
@@ -190,6 +179,7 @@
                         }
                     };
 
+                    
                     resultMessage.Attachments.Add(heroCard.ToAttachment());
                 }
 
