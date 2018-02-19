@@ -35,6 +35,18 @@
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
         {
+
+            if (result.Query == "bookflight")
+            {
+
+            }
+            else if (result.Query == "saveforlater")
+            {
+
+            }
+
+
+
             string message = $"{AppConstant.UnableToUnderstandCommandMessage} '{result.Query}'. {AppConstant.TypeHelpMessage}";
 
             await context.PostAsync(message);

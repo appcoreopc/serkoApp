@@ -45,8 +45,6 @@ namespace LuisBot.Dialogs
             (DateTime? start, DateTime? endDate) = ResolveTravellingDates(result.Entities);
             var titleMessage = $"Travelling from {FromLocation} to {ToLocation} on {start?.ToShortDateString()} till {endDate?.ToShortDateString()}";
 
-
-
             var bookItem = new HeroCard()
             {
                 Title = titleMessage,
@@ -56,28 +54,29 @@ namespace LuisBot.Dialogs
                         new CardAction()
                         {
                              Title = "Book flight",
-                             Type = ActionTypes.OpenUrl
+                             Type = ActionTypes.ImBack, Value = "bookflight"
+
                         },
                           new CardAction()
                         {
                              Title = "Book hotel",
-                             Type = ActionTypes.OpenUrl
+                             Type = ActionTypes.ImBack
                         },
                            new CardAction()
                         {
                              Title = "Book cars",
-                             Type = ActionTypes.OpenUrl
+                             Type = ActionTypes.ImBack
                         },
 
                              new CardAction()
                         {
                              Title = "Book all (flight, hotel and car)",
-                             Type = ActionTypes.OpenUrl
+                             Type = ActionTypes.ImBack
                         },
                            new CardAction()
                         {
                              Title = "Save for later",
-                             Type = ActionTypes.OpenUrl
+                             Type = ActionTypes.ImBack, Value = "saveforlater"
                         }
                    }
             };
@@ -157,7 +156,6 @@ namespace LuisBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var message = await result;
-
         }
     }
 
