@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdaptiveCards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\AdaptiveCards.1.0.0-beta11\lib\net452\AdaptiveCards.dll</HintPath>
+    <Reference Include="AdaptiveCards, Version=0.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AdaptiveCards.0.5.1\lib\net452\AdaptiveCards.dll</HintPath>
     </Reference>
     <Reference Include="Autofac, Version=4.2.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>packages\Autofac.4.2.1\lib\net45\Autofac.dll</HintPath>
@@ -144,6 +144,8 @@
     <Compile Include="Services\BingSpellCheckResponse.cs" />
     <Compile Include="Services\BingSpellCheckService.cs" />
     <Compile Include="Services\BingSpellCheckSuggestion.cs" />
+    <Compile Include="Util\CardMessageUtil.cs" />
+    <Compile Include="Util\HotelCardLayout.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

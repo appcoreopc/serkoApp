@@ -14,7 +14,6 @@
     using System.Net.Http;
     using LuisBot.Model;
 
-
     [LuisModel("7613da72-8006-4d27-bc0b-4a96e723d5bf", "e9d4cd55c7224d57b0c93cce45713594")]
     [Serializable]
     public class RootLuisDialog : LuisDialog<object>
@@ -28,14 +27,11 @@
         private IList<string> titleOptions = new List<string> { "“Very stylish, great stay, great staff”",
             "“good hotel awful meals”", "“Need more attention to little things”", "“Lovely small hotel ideally situated to explore the area.”",
             "“Positive surprise”", "“Beautiful suite and resort”" };
-
-
-
+                
         [LuisIntent("")]
         [LuisIntent("None")]
-        public async Task None(IDialogContext context, LuisResult result)
+        public async Task ResolvedAsNone(IDialogContext context, LuisResult result)
         {
-
             if (result.Query == "bookflight")
             {
 
@@ -44,9 +40,7 @@
             {
 
             }
-
-
-
+            
             string message = $"{AppConstant.UnableToUnderstandCommandMessage} '{result.Query}'. {AppConstant.TypeHelpMessage}";
 
             await context.PostAsync(message);
@@ -55,14 +49,13 @@
         }
 
         [LuisIntent("search")]
-        public async Task SearchV2(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+        public async Task ResolvedAsBookingDialog(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
         {
             var message = await activity;
             
             // post message to bot console //
             //await context.PostAsync($"{AppConstant.SearchingTextMessage}: '{message.Text}' {AppConstant.DotDotDotMessage}");
-
-
+            
             if (result != null)
             {
                 context.Call(new BookingDialog(result), this.OnResumeBookingDialog);
@@ -90,7 +83,7 @@
         }
 
         [LuisIntent("ShowHotelsReviews")]
-        public async Task Reviews(IDialogContext context, LuisResult result)
+        public async Task ResolvedAsReviews(IDialogContext context, LuisResult result)
         {
             EntityRecommendation hotelEntityRecommendation;
 
@@ -125,7 +118,7 @@
         }
 
         [LuisIntent("Help")]
-        public async Task Help(IDialogContext context, LuisResult result)
+        public async Task ResolvedAsHelp(IDialogContext context, LuisResult result)
         {
             await context.PostAsync(AppConstant.ChatHelpMessage);
 
@@ -186,6 +179,7 @@
                             {
                                 Title = "More details",
                                 Type = ActionTypes.OpenUrl,
+                               
                                 Value = $"https://www.bing.com/search?q=hotels+in+" + HttpUtility.UrlEncode(hotel.Location)
                             }
                         }

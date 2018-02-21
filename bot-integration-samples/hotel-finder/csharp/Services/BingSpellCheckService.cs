@@ -13,7 +13,7 @@
         /// <summary>
         /// The Bing Spell Check Api Url.
         /// </summary>
-        private const string SpellCheckApiUrl = "https://api.cognitive.microsoft.com/bing/v5.0/spellcheck/?form=BCSSCK";
+        private const string SpellCheckApiUrl = "https://api.cognitive.microsoft.com/bing/v7.0/spellcheck";
 
         /// <summary>
         /// Microsoft Bing Spell Check Api Key.
@@ -27,6 +27,9 @@
         /// <returns>string with corrected text</returns>
         public async Task<string> GetCorrectedTextAsync(string text)
         {
+
+             string mode = "spell";
+
             if (string.IsNullOrEmpty(text))
             {
                 return text;
@@ -38,7 +41,8 @@
 
                 var values = new Dictionary<string, string>
                 {
-                    { "text", text }
+                    { "text", text },
+                     { "mode", mode }
                 };
 
                 var content = new FormUrlEncodedContent(values);

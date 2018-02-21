@@ -8,6 +8,7 @@ using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using LuisBot.Util;
 
 namespace LuisBot.Dialogs
 {
@@ -43,46 +44,50 @@ namespace LuisBot.Dialogs
 
             (string FromLocation, string ToLocation) = ResolvePlace(result.Entities);
             (DateTime? start, DateTime? endDate) = ResolveTravellingDates(result.Entities);
+            
             var titleMessage = $"Travelling from {FromLocation} to {ToLocation} on {start?.ToShortDateString()} till {endDate?.ToShortDateString()}";
+            
+            var layout = new CardMessageUtil(context).MakeMessage(new HotelCardLayout().CreateHotelLayoutFromResult(titleMessage, null));
+            
+            //var bookItem = new HeroCard()
+            //{
+            //    Title = titleMessage,
+            //    Subtitle = "User Action",
+            //    Buttons = new List<CardAction>()
+            //     {
+            //            new CardAction()
+            //            {
+            //                 Title = "Book flight",
+            //                 Type = ActionTypes.ImBack, Value = "bookflight"
 
-            var bookItem = new HeroCard()
-            {
-                Title = titleMessage,
-                Subtitle = "User Action",
-                Buttons = new List<CardAction>()
-                 {
-                        new CardAction()
-                        {
-                             Title = "Book flight",
-                             Type = ActionTypes.ImBack, Value = "bookflight"
+            //            },
+            //              new CardAction()
+            //            {
+            //                 Title = "Book hotel",
+            //                 Type = ActionTypes.ImBack
+            //            },
+            //               new CardAction()
+            //            {
+            //                 Title = "Book cars",
+            //                 Type = ActionTypes.ImBack
+            //            },
 
-                        },
-                          new CardAction()
-                        {
-                             Title = "Book hotel",
-                             Type = ActionTypes.ImBack
-                        },
-                           new CardAction()
-                        {
-                             Title = "Book cars",
-                             Type = ActionTypes.ImBack
-                        },
+            //                 new CardAction()
+            //            {
+            //                 Title = "Book all (flight, hotel and car)",
+            //                 Type = ActionTypes.ImBack
+            //            },
+            //               new CardAction()
+            //            {
+            //                 Title = "Save for later",
+            //                 Type = ActionTypes.ImBack, Value = "saveforlater"
+            //            }
+            //       }
+            //};
 
-                             new CardAction()
-                        {
-                             Title = "Book all (flight, hotel and car)",
-                             Type = ActionTypes.ImBack
-                        },
-                           new CardAction()
-                        {
-                             Title = "Save for later",
-                             Type = ActionTypes.ImBack, Value = "saveforlater"
-                        }
-                   }
-            };
+            //bookingsForUser.Attachments.Add(bookItem.ToAttachment());
 
-            bookingsForUser.Attachments.Add(bookItem.ToAttachment());
-            context.PostAsync(bookingsForUser);
+            context.PostAsync(layout);
 
         }
 
