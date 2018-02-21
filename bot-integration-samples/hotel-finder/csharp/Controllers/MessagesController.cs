@@ -37,8 +37,7 @@
                     {
                         Trace.TraceError(ex.ToString());
                     }
-                }
-                
+                }                
                 
                 await Conversation.SendAsync(activity, () => new RootLuisDialog());
             }

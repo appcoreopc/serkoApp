@@ -14,7 +14,8 @@ namespace LuisBot.Util
                     {
                         Text = title,
                         Size = TextSize.ExtraLarge,
-                        Speak = $"<s>{title}</s>"
+                        Speak = $"<s>{title}</s>",
+                        Wrap = true
                     }
             };
 
@@ -27,14 +28,14 @@ namespace LuisBot.Util
                     {
                         Title = "Book Flight",
                         Speak = "<s>Book Flight</s>",
-                        DataJson = "{ \"Type\": \"HotelSearch\" }"
-                    },
+                        DataJson = "{ \"Type\": \"BookFlight\" }"
+                    },                    
 
                     new SubmitAction()
                     {
                         Title = "Book Car",  
                         Speak = "<s>Book Car</s>",
-                        DataJson = "{ \"Type\": \"Car\" }"
+                        DataJson = "{ \"Type\": \"BookCar\" }"
                     },
 
                     new SubmitAction()
