@@ -13,6 +13,29 @@ using LuisBot.Util;
 namespace LuisBot.Dialogs
 {
     // NameDialog
+
+    //new TextInput()
+    //{
+    //    Id = "Destination",
+    //            Speak = "<s>Please enter your destination</s>",
+    //            Placeholder = "Miami, Florida",
+    //            Style = TextInputStyle.Text
+    //        },
+    //        new TextBlock() { Text = "When do you want to check in?" },
+    //        new DateInput()
+    //{
+    //    Id = "Checkin",
+    //            Speak = "<s>When do you want to check in?</s>"
+    //        },
+    //        new TextBlock() { Text = "How many nights do you want to stay?" },
+    //        new NumberInput()
+    //{
+    //    Id = "Nights",
+    //            Min = 1,
+    //            Max = 60,
+    //            Speak = "<s>How many nights do you want to stay?</s>"
+    //  }
+
     [Serializable]
     public class BookingDialog : IDialog<BookingInfo>
     {
@@ -44,49 +67,10 @@ namespace LuisBot.Dialogs
 
             (string FromLocation, string ToLocation) = ResolvePlace(result.Entities);
             (DateTime? start, DateTime? endDate) = ResolveTravellingDates(result.Entities);
-            
+
             var titleMessage = $"Travelling from {FromLocation} to {ToLocation} on {start?.ToShortDateString()} till {endDate?.ToShortDateString()}";
-            
+
             var layout = new CardMessageUtil(context).MakeMessage(new HotelCardLayout().CreateHotelLayoutFromResult(titleMessage, null));
-            
-            //var bookItem = new HeroCard()
-            //{
-            //    Title = titleMessage,
-            //    Subtitle = "User Action",
-            //    Buttons = new List<CardAction>()
-            //     {
-            //            new CardAction()
-            //            {
-            //                 Title = "Book flight",
-            //                 Type = ActionTypes.ImBack, Value = "bookflight"
-
-            //            },
-            //              new CardAction()
-            //            {
-            //                 Title = "Book hotel",
-            //                 Type = ActionTypes.ImBack
-            //            },
-            //               new CardAction()
-            //            {
-            //                 Title = "Book cars",
-            //                 Type = ActionTypes.ImBack
-            //            },
-
-            //                 new CardAction()
-            //            {
-            //                 Title = "Book all (flight, hotel and car)",
-            //                 Type = ActionTypes.ImBack
-            //            },
-            //               new CardAction()
-            //            {
-            //                 Title = "Save for later",
-            //                 Type = ActionTypes.ImBack, Value = "saveforlater"
-            //            }
-            //       }
-            //};
-
-            //bookingsForUser.Attachments.Add(bookItem.ToAttachment());
-
             context.PostAsync(layout);
 
         }
